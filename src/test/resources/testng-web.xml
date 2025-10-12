@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Web Automation Suite" verbose="1">
+
+    <parameter name="platform" value="web"/>
+    <parameter name="browserName" value="chrome"/>
+
+    <test name="Facebook Web Tests - Chrome">
+        <parameter name="browserName" value="chrome"/>
+        <classes>
+            <class name="com.automation.tests.web.FacebookWebTest"/>
+        </classes>
+    </test>
+
+    <test name="Facebook Web Tests - Firefox">
+        <parameter name="browserName" value="firefox"/>
+        <classes>
+            <class name="com.automation.tests.web.FacebookWebTest"/>
+        </classes>
+    </test>
+
+</suite>

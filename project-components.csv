@@ -1,0 +1,19 @@
+Category,File Name,Description,Location
+Core Framework,AppiumServerManager.java,Manages Appium server lifecycle programmatically,base
+Core Framework,BaseTest.java,Base test class with driver management for web and mobile,base
+Utility,ScreenshotUtils.java,Screenshot capture utility with failure handling,utils
+Utility,ScreenRecordingUtils.java,Mobile screen recording utility,utils
+Utility,WaitUtils.java,Smart wait strategies and element waiting,utils
+Utility,TestListener.java,TestNG listener for test event handling,utils
+Page Object,FacebookWebPage.java,Web page object for Facebook login,pages/web
+Page Object,FacebookMobilePage.java,Mobile page object for Facebook login,pages/mobile
+Test Class,FacebookWebTest.java,Web test cases for Facebook login,tests/web
+Test Class,FacebookMobileTest.java,Mobile test cases for Facebook login,tests/mobile
+Configuration,pom.xml,Maven project configuration with dependencies,root
+Configuration,testng.xml,Main TestNG suite configuration,test/resources
+Configuration,testng-web.xml,Web-only TestNG suite,test/resources
+Configuration,testng-mobile.xml,Mobile-only TestNG suite,test/resources
+Configuration,log4j2.xml,Logging configuration,main/resources
+Configuration,config.properties,Framework configuration properties,main/resources
+Documentation,README.md,Comprehensive setup and usage guide,root
+Configuration,.gitignore,Git ignore file,root

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Mobile Web Automation Suite" verbose="1">
+
+    <parameter name="platform" value="web"/>
+    <parameter name="browserName" value="chrome"/>
+    <parameter name="deviceName" value="Chrome"/>
+    <parameter name="platformVersion" value="latest"/>
+    <parameter name="appPath" value=""/>
+
+    <!-- Web Tests -->
+    <test name="Facebook Web Tests" preserve-order="true">
+        <parameter name="platform" value="web"/>
+        <parameter name="browserName" value="chrome"/>
+        <classes>
+            <class name="com.automation.tests.web.FacebookWebTest"/>
+        </classes>
+    </test>
+
+    <!-- Mobile Tests - Android -->
+    <test name="Facebook Android Tests" preserve-order="true" enabled="false">
+        <parameter name="platform" value="android"/>
+        <parameter name="deviceName" value="Android Emulator"/>
+        <parameter name="platformVersion" value="11.0"/>
+        <parameter name="appPath" value="path/to/facebook.apk"/>
+        <classes>
+            <class name="com.automation.tests.mobile.FacebookMobileTest"/>
+        </classes>
+    </test>
+
+    <!-- Mobile Tests - iOS -->
+    <test name="Facebook iOS Tests" preserve-order="true" enabled="false">
+        <parameter name="platform" value="ios"/>
+        <parameter name="deviceName" value="iPhone 14"/>
+        <parameter name="platformVersion" value="16.0"/>
+        <parameter name="appPath" value="path/to/facebook.app"/>
+        <classes>
+            <class name="com.automation.tests.mobile.FacebookMobileTest"/>
+        </classes>
+    </test>
+
+    <listeners>
+        <listener class-name="com.automation.utils.TestListener"/>
+    </listeners>
+
+</suite>
