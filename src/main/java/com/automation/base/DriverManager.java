@@ -8,34 +8,30 @@ import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.options.XCUITestOptions;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 
 /**
- * DriverManager - Manages the lifecycle of WebDriver and AppiumDriver instances.
- * It uses ThreadLocal to ensure thread-safe parallel test execution.
+ * DriverManager - Manages WebDriver and AppiumDriver instances
+ * Thread-safe for parallel execution
  */
 public class DriverManager {
 
-    private static final Logger logger = LogManager.getLogger(DriverManager.class);
     private static final ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
 
     /**
-     * Initializes the driver based on the specified platform.
-     *
-     * @param platform The platform to run tests on (e.g., "android", "ios", "web").
+     * Initialize driver based on platform
+     * @param platform Platform to run tests (android, ios, web)
      */
     public static void initializeDriver(String platform) {
         WebDriver driver = null;
+        
         try {
             switch (platform.toLowerCase()) {
                 case "android":
@@ -48,42 +44,45 @@ public class DriverManager {
                     driver = createWebDriver();
                     break;
                 default:
-                    throw new IllegalArgumentException("Unsupported platform: " + platform);
+                    throw new RuntimeException("Unsupported platform: " + platform);
             }
+            
             driverThreadLocal.set(driver);
-            logger.info("{} driver initialized successfully.", platform);
-        } catch (MalformedURLException e) {
-            logger.error("Failed to initialize driver due to invalid URL.", e);
-            throw new RuntimeException("Driver initialization failed.", e);
+            System.out.println("Driver initialized for platform: " + platform);
+            
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize driver: " + e.getMessage());
         }
     }
 
     /**
-     * Retrieves the driver for the current thread.
-     *
-     * @return The WebDriver instance.
+     * Get current thread's driver
+     * @return WebDriver instance
      */
     public static WebDriver getDriver() {
-        if (driverThreadLocal.get() == null) {
-            throw new IllegalStateException("Driver has not been initialized. Call initializeDriver() first.");
+        WebDriver driver = driverThreadLocal.get();
+        if (driver == null) {
+            throw new RuntimeException("Driver not initialized. Call initializeDriver() first.");
         }
-        return driverThreadLocal.get();
+        return driver;
     }
 
     /**
-     * Quits the driver and removes it from the ThreadLocal container.
+     * Quit driver and clean up
      */
     public static void quitDriver() {
         WebDriver driver = driverThreadLocal.get();
         if (driver != null) {
             driver.quit();
             driverThreadLocal.remove();
-            logger.info("Driver quit successfully.");
+            System.out.println("Driver quit successfully");
         }
     }
 
-    private static AppiumDriver createAndroidDriver() throws MalformedURLException {
+    // Create Android driver
+    private static AppiumDriver createAndroidDriver() throws Exception {
         AppiumServerManager.startServer();
+        
         UiAutomator2Options options = new UiAutomator2Options()
                 .setPlatformName(ConfigReader.getProperty("android.platformName"))
                 .setPlatformVersion(ConfigReader.getProperty("android.platformVersion"))
@@ -99,8 +98,10 @@ public class DriverManager {
         return new AndroidDriver(new URL(AppiumServerManager.getServerUrl()), options);
     }
 
-    private static AppiumDriver createIOSDriver() throws MalformedURLException {
+    // Create iOS driver
+    private static AppiumDriver createIOSDriver() throws Exception {
         AppiumServerManager.startServer();
+        
         XCUITestOptions options = new XCUITestOptions()
                 .setPlatformName(ConfigReader.getProperty("ios.platformName"))
                 .setPlatformVersion(ConfigReader.getProperty("ios.platformVersion"))
@@ -116,6 +117,7 @@ public class DriverManager {
         return new IOSDriver(new URL(AppiumServerManager.getServerUrl()), options);
     }
 
+    // Create Web driver
     private static WebDriver createWebDriver() {
         String browserName = ConfigReader.getProperty("browserName");
         WebDriver driver;
@@ -129,15 +131,18 @@ public class DriverManager {
                 chromeOptions.addArguments("--disable-dev-shm-usage");
                 driver = new ChromeDriver(chromeOptions);
                 break;
+                
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 driver = new FirefoxDriver(firefoxOptions);
                 break;
+                
             default:
-                throw new IllegalArgumentException("Browser not supported: " + browserName);
+                throw new RuntimeException("Browser not supported: " + browserName);
         }
 
+        // Set timeouts
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
         return driver;
